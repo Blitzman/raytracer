@@ -33,6 +33,8 @@ include_directories(include)
 ### PROJECT ###################################################################
 ###############################################################################
 
+set(CMAKE_BUILD_TYPE Debug)
+
 add_executable(${PROJECT_NAME} ${SOURCE})
 
 foreach(LIBRARY ${LIBRARIES})

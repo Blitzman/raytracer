@@ -6,13 +6,13 @@
 #include <string>
 #include <vector>
 
-#include <vec3f.hpp>
+#include <vec3.hpp>
 
 class PPMWriter
 {
   public:
 
-    void write(const std::vector<Vec3f> & crColors, const int & crRows, const int & crCols, const std::string & crFilename)
+    void write(const std::vector<Vec3<float>> & crColors, const int & crRows, const int & crCols, const std::string & crFilename)
     {
       std::ofstream f_(crFilename);
 
