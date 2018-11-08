@@ -84,6 +84,9 @@ class Vec3
     friend Vec3 operator/(const T & t, const Vec3 &v1) { return Vec3(v1[0]/t, v1[1]/t, v1[2]/t); }
 
     T dot(const Vec3 & v1, const Vec3 & v2) { return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]; }
+
+    T dot(const Vec3 & v) { return this->dot(*this, v); }
+
     Vec3 cross(const Vec3 & v1, const Vec3 & v2)
     {
       return Vec3(  (v1[1] * v2[2] - v1[2] * v2[1]),
