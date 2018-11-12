@@ -20,7 +20,7 @@ class PPMWriter
       {
         f_ << "P3\n" << crCols << " " << crRows << "\n255\n";
         
-        for (int j = crRows - 1; j >= 0; --j)
+        for (int j = 0; j < crRows; ++j)
         {
           for (int i = 0; i < crCols; ++i)
           {
