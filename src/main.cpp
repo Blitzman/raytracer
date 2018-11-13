@@ -1,12 +1,14 @@
 #include <iostream>
 #include <limits>
 
-#include <ppm_writer.hpp>
+#include <random>
 
-#include "vec3.hpp"
-#include "sphere.hpp"
+#include "camera.hpp"
 #include "hitable_list.hpp"
+#include "ppm_writer.hpp"
 #include "ray.hpp"
+#include "sphere.hpp"
+#include "vec3.hpp"
 
 Vec3<float> color(const Ray & r, Hitable * world)
 {
@@ -26,8 +28,9 @@ Vec3<float> color(const Ray & r, Hitable * world)
 
 int main(void)
 {
-  int nx_ = 1920;
-  int ny_ = 1080;
+  int nx_ = 200;
+  int ny_ = 100;
+  int ns_ = 128;
 
   PPMWriter ppm_writer_;
 
@@ -38,24 +41,34 @@ int main(void)
   Vec3<float> vertical_(0.0f, 2.0f, 0.0f);
   Vec3<float> origin_(0.0f, 0.0f, 0.0f);
 
-  Hitable *list_[4];
+  Hitable *list_[2];
   list_[0] = new Sphere(Vec3<float>(0.0f, 0.0f, -1.0f), 0.5f);
   list_[1] = new Sphere(Vec3<float>(0.0f, -100.5f, -1.0f), 100.0f);
-  list_[2] = new Sphere(Vec3<float>(1.75f, 0.5f, -1.5f), 0.4f);
-  list_[3] = new Sphere(Vec3<float>(-1.75f, 0.5f, -1.5f), 0.4f);
-  Hitable *world_ = new HitableList(list_, 4);
+  Hitable *world_ = new HitableList(list_, 2);
+
+  Camera camera_;
+
+  std::random_device random_device_;
+  std::mt19937 generator_(random_device_());
+  std::uniform_real_distribution<float> distribution_(0, 1);
 
   for (int j = ny_ - 1; j >= 0; --j)
   {
     for (int i = 0; i < nx_; ++i)
     {
-      float u_ = float(i) / float(nx_);
-      float v_ = float(j) / float(ny_);
+      Vec3<float> pixel_(0.0f, 0.0f, 0.0f);
 
-      Ray ray_(origin_, lower_left_corner_ + u_ * horizontal_ + v_ * vertical_);
-      Vec3<float> p_ = ray_.point_at_parameter(2.0f);
+      for (int s = 0; s < ns_; ++s)
+      {
+        float u_ = float(i + distribution_(generator_)) / float(nx_);
+        float v_ = float(j + distribution_(generator_)) / float(ny_);
 
-      Vec3<float> pixel_ = color(ray_, world_);
+        Ray ray_ = camera_.get_ray(u_, v_);
+        Vec3<float> p_ = ray_.point_at_parameter(2.0f);
+        pixel_ += color(ray_, world_);
+      }
+
+      pixel_ /= float(ns_);
       image_.push_back(pixel_);
     }
   }

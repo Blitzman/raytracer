@@ -17,7 +17,7 @@ class Ray
 
     Vec3<float> origin() const { return m_a; }
     Vec3<float> direction() const { return m_b; }
-    Vec3<float> point_at_parameter(const float & t) const { return m_a + m_b * t; }
+    Vec3<float> point_at_parameter(float t) const { return m_a + m_b * t; }
 
   private:
 
