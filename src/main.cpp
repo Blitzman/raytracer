@@ -10,13 +10,31 @@
 #include "sphere.hpp"
 #include "vec3.hpp"
 
+std::random_device random_device_;
+std::mt19937 generator_(random_device_());
+std::uniform_real_distribution<float> distribution_(0, 1);
+
+
+Vec3<float> random_in_unit_sphere()
+{
+  Vec3<float> p_;
+
+  do
+  {
+    p_ = 2.0f * Vec3<float>(distribution_(generator_), distribution_(generator_), distribution_(generator_)) - Vec3<float>(1.0f, 1.0f, 1.0f);
+  } while (p_.squared_length() >= 1.0f);
+
+  return p_;
+}
+
 Vec3<float> color(const Ray & r, Hitable * world)
 {
   HitRecord record_;
 
-  if (world->hit(r, 0.0, std::numeric_limits<float>::max(), record_))
+  if (world->hit(r, 0.0001f, std::numeric_limits<float>::max(), record_))
   {
-    return 0.5f * Vec3<float>(record_.normal.x() + 1.0f, record_.normal.y() + 1.0f, record_.normal.z() + 1.0f);
+    Vec3<float> target_ = record_.p + record_.normal + random_in_unit_sphere();
+    return 0.5f * color(Ray(record_.p, target_ - record_.p), world);
   }
   else
   {
@@ -30,7 +48,7 @@ int main(void)
 {
   int nx_ = 200;
   int ny_ = 100;
-  int ns_ = 128;
+  int ns_ = 256;
 
   PPMWriter ppm_writer_;
 
@@ -47,10 +65,6 @@ int main(void)
   Hitable *world_ = new HitableList(list_, 2);
 
   Camera camera_;
-
-  std::random_device random_device_;
-  std::mt19937 generator_(random_device_());
-  std::uniform_real_distribution<float> distribution_(0, 1);
 
   for (int j = ny_ - 1; j >= 0; --j)
   {
@@ -69,6 +83,9 @@ int main(void)
       }
 
       pixel_ /= float(ns_);
+      
+      // Gamma squared
+      pixel_ = Vec3<float>(sqrt(pixel_[0]), sqrt(pixel_[1]), sqrt(pixel_[2]));
       image_.push_back(pixel_);
     }
   }
