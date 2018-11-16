@@ -12,10 +12,10 @@ class Sphere : public Hitable
 
     }
 
-    Sphere(Vec3<float> center, float radius) : m_center(center), m_radius(radius)
+    Sphere(Vec3<float> center, float radius, Material * material) : m_center(center), m_radius(radius), m_material(material)
     {
 
-    };
+    }
 
     virtual bool hit(const Ray & r, float tMin, float tMax, HitRecord & record) const
     {
@@ -36,6 +36,7 @@ class Sphere : public Hitable
           record.t = temp_;
           record.p = r.point_at_parameter(record.t);
           record.normal = (record.p - m_center) / m_radius;
+          record.material = m_material;
           return true;
         }
 
@@ -46,6 +47,7 @@ class Sphere : public Hitable
           record.t = temp_;
           record.p = r.point_at_parameter(record.t);
           record.normal = (record.p - m_center) / m_radius;
+          record.material = m_material;
           return true;
         }
       }
@@ -57,6 +59,7 @@ class Sphere : public Hitable
 
     Vec3<float> m_center;
     float m_radius;
+    Material *m_material;
 };
 
 #endif
