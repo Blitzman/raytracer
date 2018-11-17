@@ -26,4 +26,16 @@ Vec3<float> random_in_unit_sphere()
   return p_;
 }
 
+Vec3<float> random_in_unit_disk()
+{
+  Vec3<float> p_;
+
+  do
+  {
+    p_ = 2.0f * Vec3<float>(random_in_0_1(), random_in_0_1(), 0.0f) - Vec3<float>(1.0f, 1.0f, 0.0f);
+  }while (p_.dot(p_) >= 1.0f);
+
+  return p_;
+}
+
 #endif

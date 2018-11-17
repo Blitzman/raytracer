@@ -41,8 +41,8 @@ Vec3<float> color(const Ray & r, Hitable * world, int depth)
 
 int main(void)
 {
-  int nx_ = 1600;
-  int ny_ = 800;
+  int nx_ = 200;
+  int ny_ = 100;
   int ns_ = 128;
 
   PPMWriter ppm_writer_;
@@ -62,7 +62,13 @@ int main(void)
   list_[4] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
   Hitable *world_ = new HitableList(list_, 5);
 
-  Camera camera_(Vec3<float>(-1.5f, 1.5f, 1.0f), Vec3<float>(0.0f, 0.0f, -1.0f), Vec3<float>(0.0f, 1.0f, 0.0f), 45.0f, float(nx_) / float(ny_));
+  Vec3<float> look_from_(3.0f, 3.0f, 2.0f);
+  Vec3<float> look_at_(0.0f, 0.0f, -1.0f);
+  float fov_ = 20.0f;
+  float aspect_ = float(nx_) / float(ny_);
+  float dist_to_focus_ = (look_from_ - look_at_).length();
+  float aperture_ = 2.0f;
+  Camera camera_(look_from_, look_at_, Vec3<float>(0.0f, 1.0f, 0.0f), fov_, aspect_, aperture_, dist_to_focus_);
 
   for (int j = ny_ - 1; j >= 0; --j)
   {
