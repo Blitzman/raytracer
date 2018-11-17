@@ -87,12 +87,14 @@ class Vec3
 
     T dot(const Vec3 & v) const { return this->dot(*this, v); }
 
-    Vec3 cross(const Vec3 & v1, const Vec3 & v2)
+    Vec3 cross(const Vec3 & v1, const Vec3 & v2) const
     {
       return Vec3(  (v1[1] * v2[2] - v1[2] * v2[1]),
                     (-(v1[0] * v2[2] - v1[2] * v2[0])),
                     (v1[0] * v2[1] - v1[1] * v2[0]));
     }
+
+    Vec3 cross(const Vec3 & v) const { return this->cross(*this, v); }
 
     float squared_length() const { return m_values[0]*m_values[0] + m_values[1]*m_values[1] + m_values[2]*m_values[2]; }
 
