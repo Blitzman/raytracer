@@ -13,11 +13,57 @@
 #include "utils.hpp"
 #include "vec3.hpp"
 
-Vec3<float> color(const Ray & r, Hitable * world, int depth)
+/* Hitable * random_world(int n)
+{
+  Hitable ** list_ = new Hitable*[n+1];
+
+  list_[0] = new Sphere(Vec3<float>(0.0f, -1000.0f, 0.0f), 1000.0f, new Lambertian(Vec3<float>(0.5f, 0.5f, 0.5f)));
+
+  int i = 1;
+
+  for (int a = -11; a < 11; ++a)
+  {
+    for (int b = -11; b < 11; ++b)
+    {
+      float choose_mat_ = random_in_0_1();
+
+      Vec3<float> center_(a + 0.9f * random_in_0_1(), 0.2f, b + 0.9 * random_in_0_1());
+
+      if ((center_ - Vec3<float>(4.0f, 0.2f, 0.0f)).length() > 0.9f)
+      {
+        if (choose_mat_ < 0.8f)
+        {
+          list_[i++] = new Sphere(center_, 0.2f, new Lambertian(Vec3<float>(random_in_0_1() * random_in_0_1(),
+                                                                            random_in_0_1() * random_in_0_1(),
+                                                                            random_in_0_1() * random_in_0_1())));
+        }
+        else if (choose_mat_ < 0.95f)
+        {
+          list_[i++] = new Sphere(center_, 0.2f, new Metal(Vec3<float>(0.5f * (1.0f + random_in_0_1()),
+                                                                      0.5f * (1.0f + random_in_0_1()),
+                                                                      0.5f * (1.0f + random_in_0_1())),
+                                                            0.5f * random_in_0_1()));
+        }
+        else
+        {
+          list_[i++] = new Sphere(center_, 0.2f, new Dielectric(1.5f));
+        }
+      }
+    }
+  }
+
+  list_[i++] = new Sphere(Vec3<float>(0.0f, 1.0f, 0.0f), 1.0f, new Dielectric(1.5f));
+  list_[i++] = new Sphere(Vec3<float>(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(Vec3<float>(0.4f, 0.2f, 0.1f)));
+  list_[i++] = new Sphere(Vec3<float>(4.0f, 1.0f, 0.0f), 1.0f, new Metal(Vec3<float>(0.7f, 0.6f, 0.5f), 0.0f));
+
+  return new HitableList(list_, i);
+} */
+
+Vec3<float> color(const Ray & r, HitableList world, int depth)
 {
   HitRecord record_;
 
-  if (world->hit(r, 0.0001f, std::numeric_limits<float>::max(), record_))
+  if (world.hit(r, 0.0001f, std::numeric_limits<float>::max(), record_))
   {
     Ray scattered_;
     Vec3<float> attenuation_;
@@ -41,33 +87,33 @@ Vec3<float> color(const Ray & r, Hitable * world, int depth)
 
 int main(void)
 {
-  int nx_ = 200;
-  int ny_ = 100;
-  int ns_ = 128;
+  int nx_ = 800;
+  int ny_ = 800;
+  int ns_ = 16;
 
   PPMWriter ppm_writer_;
 
   std::vector<Vec3<float>> image_;
 
-  Vec3<float> lower_left_corner_(-2.0f, -1.0f, -1.0f);
-  Vec3<float> horizontal_(4.0f, 0.0f, 0.0f);
-  Vec3<float> vertical_(0.0f, 2.0f, 0.0f);
-  Vec3<float> origin_(0.0f, 0.0f, 0.0f);
+  Hitable* sphere1_ = new Sphere(Vec3<float>(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(Vec3<float>(0.9f, 0.9f, 0.9f)));
+  Hitable* sphere2_ = new Sphere(Vec3<float>(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(Vec3<float>(0.8f, 0.8f, 0.0f)));
+  Hitable* sphere3_ = new Sphere(Vec3<float>(1.0f, 0.0f, -1.0f), 0.5f, new Metal(Vec3<float>(0.8f, 0.6f, 0.2f), 0.3f));
+  Hitable* sphere4_ = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
+  Hitable* sphere5_ = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), -0.48f, new Dielectric(1.5f));
 
-  Hitable *list_[5];
-  list_[0] = new Sphere(Vec3<float>(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(Vec3<float>(0.8f, 0.3f, 0.3f)));
-  list_[1] = new Sphere(Vec3<float>(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(Vec3<float>(0.8f, 0.8f, 0.0f)));
-  list_[2] = new Sphere(Vec3<float>(1.0f, 0.0f, -1.0f), 0.5f, new Metal(Vec3<float>(0.8f, 0.6f, 0.2f), 0.3f));
-  list_[3] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
-  list_[4] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
-  Hitable *world_ = new HitableList(list_, 5);
+  HitableList world_;
+  world_.add(sphere1_);
+  world_.add(sphere2_);
+  world_.add(sphere3_);
+  world_.add(sphere4_);
+  world_.add(sphere5_);
 
-  Vec3<float> look_from_(3.0f, 3.0f, 2.0f);
-  Vec3<float> look_at_(0.0f, 0.0f, -1.0f);
-  float fov_ = 20.0f;
+  Vec3<float> look_from_(-0.5f, 0.5f, 2.5f);
+  Vec3<float> look_at_(-0.1f, 0.0f, 0.0f);
+  float fov_ = 60.0f;
   float aspect_ = float(nx_) / float(ny_);
-  float dist_to_focus_ = (look_from_ - look_at_).length();
-  float aperture_ = 2.0f;
+  float dist_to_focus_ = 4.0f;
+  float aperture_ = 0.1f;
   Camera camera_(look_from_, look_at_, Vec3<float>(0.0f, 1.0f, 0.0f), fov_, aspect_, aperture_, dist_to_focus_);
 
   for (int j = ny_ - 1; j >= 0; --j)

@@ -1,6 +1,8 @@
 #ifndef HITABLE_LIST_HPP_
 #define HITABLE_LIST_HPP_
 
+#include <vector>
+
 #include "hitable.hpp"
 
 class HitableList : public Hitable
@@ -12,10 +14,9 @@ class HitableList : public Hitable
 
     }
 
-    HitableList(Hitable **l, int n)
+    void add(Hitable* h)
     {
-      m_list = l;
-      m_list_size = n;
+      m_list.push_back(h);
     }
 
     virtual bool hit(const Ray & r, float tMin, float tMax, HitRecord & record) const
@@ -24,7 +25,7 @@ class HitableList : public Hitable
       bool hit_anything_ = false;
       double closest_so_far_ = tMax;
 
-      for (int i = 0; i < m_list_size; ++i)
+      for (int i = 0; i < m_list.size(); ++i)
       {
         if (m_list[i]->hit(r, tMin, closest_so_far_, temp_record_))
         {
@@ -39,8 +40,7 @@ class HitableList : public Hitable
 
   private:
 
-    Hitable ** m_list;
-    int m_list_size;
+    std::vector<Hitable*> m_list;
 };
 
 #endif
