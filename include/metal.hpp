@@ -28,11 +28,6 @@ class Metal : public Material
 
     Vec3<float> m_albedo;
     float m_fuzzy;
-
-    Vec3<float> reflect(const Vec3<float> & v, const Vec3<float> & n) const
-    {
-      return v - 2 * v.dot(n) * n;
-    }
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 
 #include "camera.hpp"
+#include "dielectric.hpp"
 #include "hitable_list.hpp"
 #include "lambertian.hpp"
 #include "metal.hpp"
@@ -53,12 +54,13 @@ int main(void)
   Vec3<float> vertical_(0.0f, 2.0f, 0.0f);
   Vec3<float> origin_(0.0f, 0.0f, 0.0f);
 
-  Hitable *list_[4];
+  Hitable *list_[5];
   list_[0] = new Sphere(Vec3<float>(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(Vec3<float>(0.8f, 0.3f, 0.3f)));
   list_[1] = new Sphere(Vec3<float>(0.0f, -100.5f, -1.0f), 100.0f, new Lambertian(Vec3<float>(0.8f, 0.8f, 0.0f)));
   list_[2] = new Sphere(Vec3<float>(1.0f, 0.0f, -1.0f), 0.5f, new Metal(Vec3<float>(0.8f, 0.6f, 0.2f), 0.3f));
-  list_[3] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), 0.5f, new Metal(Vec3<float>(0.8f, 0.8f, 0.8f), 1.0f));
-  Hitable *world_ = new HitableList(list_, 4);
+  list_[3] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
+  list_[4] = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
+  Hitable *world_ = new HitableList(list_, 5);
 
   Camera camera_;
 

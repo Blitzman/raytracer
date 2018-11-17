@@ -106,7 +106,7 @@ class Vec3
       m_values[2] *= k_;
     }
 
-    Vec3 unit_vector()
+    Vec3 unit_vector() const
     {
       return (*this) / this->length();
     }
