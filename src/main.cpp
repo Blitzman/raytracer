@@ -2,6 +2,7 @@
 #include <limits>
 
 
+#include "bvh_node.hpp"
 #include "camera.hpp"
 #include "dielectric.hpp"
 #include "hitable_list.hpp"

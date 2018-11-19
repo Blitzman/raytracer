@@ -38,6 +38,31 @@ class HitableList : public Hitable
       return hit_anything_;
     }
 
+    virtual bool bounding_box(float t0, float t1, AABB & box) const
+    {
+      if (m_list.size() < 1)
+        return false;
+
+      AABB temp_box_;
+
+      bool first_true_ = m_list[0]->bounding_box(t0, t1, temp_box_);
+
+      if (!first_true_)
+        return false;
+
+      box = temp_box_;
+
+      for (int i = 1; i < m_list.size(); ++i)
+      {
+        if (m_list[0]->bounding_box(t0, t1, temp_box_))
+          box = surrounding_box(box, temp_box_);
+        else
+          return false;
+      }
+
+      return true;
+    }
+
   private:
 
     std::vector<Hitable*> m_list;

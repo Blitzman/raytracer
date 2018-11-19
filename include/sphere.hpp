@@ -55,6 +55,13 @@ class Sphere : public Hitable
       return false;
     }
 
+    virtual bool bounding_box(float t0, float t1, AABB & box) const
+    {
+      box = AABB(m_center - Vec3<float>(m_radius, m_radius, m_radius),
+                  m_center + Vec3<float>(m_radius, m_radius, m_radius));
+      return true;
+    }
+
   private:
 
     Vec3<float> m_center;
