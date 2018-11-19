@@ -89,7 +89,7 @@ int main(void)
 {
   int nx_ = 800;
   int ny_ = 800;
-  int ns_ = 16;
+  int ns_ = 100;
 
   PPMWriter ppm_writer_;
 
@@ -114,7 +114,7 @@ int main(void)
   float aspect_ = float(nx_) / float(ny_);
   float dist_to_focus_ = 4.0f;
   float aperture_ = 0.1f;
-  Camera camera_(look_from_, look_at_, Vec3<float>(0.0f, 1.0f, 0.0f), fov_, aspect_, aperture_, dist_to_focus_);
+  Camera camera_(look_from_, look_at_, Vec3<float>(0.0f, 1.0f, 0.0f), fov_, aspect_, aperture_, dist_to_focus_, 0.0f, 1.0f);
 
   for (int j = ny_ - 1; j >= 0; --j)
   {

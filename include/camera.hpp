@@ -8,8 +8,19 @@ class Camera
 {
   public:
 
-    Camera(Vec3<float> lookFrom, Vec3<float> lookAt, Vec3<float> up, float vfov, float aspect, float aperture, float focusDistance)
+    Camera(Vec3<float> lookFrom, 
+          Vec3<float> lookAt,
+          Vec3<float> up,
+          float vfov,
+          float aspect,
+          float aperture,
+          float focusDistance, 
+          float t0,
+          float t1)
     {
+      m_time0 = t0;
+      m_time1 = t1;
+
       m_lens_radius = aperture / 2.0f;
 
       // Convert vertical FoV in degres to radians
@@ -33,6 +44,7 @@ class Camera
     {
       Vec3<float> rd_ = m_lens_radius * random_in_unit_disk();
       Vec3<float> offset_ = m_u * rd_.x() + m_v * rd_.y();
+      float time_ = m_time0 + random_in_0_1() * (m_time1 - m_time1);
       return Ray(m_origin + offset_, m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset_);
     }
 
@@ -45,6 +57,9 @@ class Camera
     Vec3<float> m_u, m_v, m_w;
 
     float m_lens_radius;
+
+    float m_time0;
+    float m_time1;
 };
 
 #endif
