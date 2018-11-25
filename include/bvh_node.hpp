@@ -1,6 +1,9 @@
 #ifndef BVH_NODE_HPP_
 #define BVH_NODE_HPP_
 
+#include <algorithm>
+
+#include "hitable_list.hpp"
 #include "hitable.hpp"
 #include "utils.hpp"
 
@@ -13,16 +16,27 @@ class BVHNode : public Hitable
 
     }
 
-    BVHNode(Hitable **l, int n, float t0, float t1)
+    BVHNode(HitableList l, int n, float t0, float t1)
     {
       int axis_ = int(3 * random_in_0_1());
 
       if (axis_ == 0)
-        qsort(l, n, sizeof(Hitable *), box_x_compare);
+      {
+        //std::cout << "Sorting X\n";
+        l.sort_x();
+      }
       else if (axis_ == 1)
-        qsort(l, n, sizeof(Hitable *), box_y_compare);
+      {
+        //std::cout << "Sorting Y\n";
+        l.sort_y();
+      }
       else
-        qsort(l, n, sizeof(Hitable *), box_z_compare);
+      {
+        //std::cout << "Sorting Z\n";
+        l.sort_z();
+      }
+
+      //std::cout << "Sorted\n";
 
       if (n == 1)
       {
@@ -35,8 +49,11 @@ class BVHNode : public Hitable
       }
       else
       {
-        m_left = new BVHNode(l, n/2, t0, t1);
-        m_right = new BVHNode(l + n/2, n - n/2, t0, t1);
+        auto list_left_ = l.slice_list(0, n/2);
+        auto list_right_ = l.slice_list(n/2, n);
+
+        m_left = new BVHNode(list_left_, n/2, t0, t1);
+        m_right = new BVHNode(list_right_, n - n/2, t0, t1);
       }
 
       AABB box_left_;

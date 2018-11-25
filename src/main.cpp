@@ -90,7 +90,7 @@ int main(void)
 {
   int nx_ = 800;
   int ny_ = 800;
-  int ns_ = 100;
+  int ns_ = 50;
 
   PPMWriter ppm_writer_;
 
@@ -102,12 +102,23 @@ int main(void)
   Hitable* sphere4_ = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
   Hitable* sphere5_ = new Sphere(Vec3<float>(-1.0f, 0.0f, -1.0f), -0.48f, new Dielectric(1.5f));
 
-  HitableList world_;
-  world_.add(sphere1_);
-  world_.add(sphere2_);
-  world_.add(sphere3_);
-  world_.add(sphere4_);
-  world_.add(sphere5_);
+  HitableList spheres_;
+  for (int i = 0; i < 10; ++i)
+  {
+    Hitable* sphere_x_ = new Sphere(Vec3<float>((random_in_0_1() - 0.5f) * 10.0f, 0.0f, (random_in_0_1() - 0.5f)* 10.0f), 0.5f, new Lambertian(Vec3<float>(0.9f, 0.9f, 0.9f)));
+    spheres_.add(sphere_x_);
+  }
+
+  std::cout << "Added 100 spheres...\n";
+
+  spheres_.add(sphere1_);
+  spheres_.add(sphere2_);
+  spheres_.add(sphere3_);
+  spheres_.add(sphere4_);
+  spheres_.add(sphere5_);
+  //BVHNode* bvh_node_ = new BVHNode(spheres_, 105, 0.0f, 1.0f);
+  //HitableList world_;
+  //world_.add((Hitable *)bvh_node_);
 
   Vec3<float> look_from_(-0.5f, 0.5f, 2.5f);
   Vec3<float> look_at_(-0.1f, 0.0f, 0.0f);
@@ -130,7 +141,7 @@ int main(void)
 
         Ray ray_ = camera_.get_ray(u_, v_);
         Vec3<float> p_ = ray_.point_at_parameter(2.0f);
-        pixel_ += color(ray_, world_, 0);
+        pixel_ += color(ray_, spheres_, 0);
       }
 
       pixel_ /= float(ns_);

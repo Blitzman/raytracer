@@ -14,9 +14,22 @@ class HitableList : public Hitable
 
     }
 
+    Hitable* operator[] (const int & crIdx) const { return m_list[crIdx]; }
+    Hitable*& operator[] (const int & crIdx) { return m_list[crIdx]; }
+
     void add(Hitable* h)
     {
       m_list.push_back(h);
+    }
+
+    HitableList slice_list(int begin, int end)
+    {
+      HitableList sliced_list_;
+
+      for (int i = begin; i < end; ++i)
+        sliced_list_.add(m_list[i]);
+
+      return sliced_list_;
     }
 
     virtual bool hit(const Ray & r, float tMin, float tMax, HitRecord & record) const
@@ -61,6 +74,61 @@ class HitableList : public Hitable
       }
 
       return true;
+    }
+
+    void sort_x()
+    {
+      std::sort(m_list.begin(), m_list.end(), [ ]( const Hitable *a, const Hitable *b )
+      {
+        AABB box_left_;
+        AABB box_right_;
+
+        //std::cout << "Sorting\n";
+
+        if (!a->bounding_box(0.0f, 0.0f, box_left_) || ! b->bounding_box(0.0f, 0.0f, box_right_))
+          std::cerr << "No bounding box in BVH node constructor...\n";
+      
+        //std::cout << "BB\n";
+
+        if (box_left_.min().x() - box_right_.min().x() < 0.0f)
+          return -1;
+        else
+          return 1;
+      });
+    }
+
+    void sort_y()
+    {
+      sort(m_list.begin( ), m_list.end( ), [ ]( const Hitable *a, const Hitable *b )
+      {
+        AABB box_left_;
+        AABB box_right_;
+
+        if (!a->bounding_box(0.0f, 0.0f, box_left_) || ! b->bounding_box(0.0f, 0.0f, box_right_))
+          std::cerr << "No bounding box in BVH node constructor...\n";
+      
+        if (box_left_.min().y() - box_right_.min().y() < 0.0f)
+          return -1;
+        else
+          return 1;
+      });
+    }
+
+    void sort_z()
+    {
+      sort(m_list.begin( ), m_list.end( ), [ ]( const Hitable *a, const Hitable *b )
+      {
+        AABB box_left_;
+        AABB box_right_;
+
+        if (!a->bounding_box(0.0f, 0.0f, box_left_) || ! b->bounding_box(0.0f, 0.0f, box_right_))
+          std::cerr << "No bounding box in BVH node constructor...\n";
+      
+        if (box_left_.min().z() - box_right_.min().z() < 0.0f)
+          return -1;
+        else
+          return 1;
+      });
     }
 
   private:
